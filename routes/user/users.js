@@ -2,6 +2,8 @@ const {v1: uuidv1} = require('uuid');
 var express = require('express');
 var router = express.Router();
 
+const checkUserRequest = require('./checkUserRequest');
+
 const dotenv = require('dotenv').config();
 const mysqlObj = require('../../config/mysql.js');
 const conn = mysqlObj.init();
@@ -30,15 +32,15 @@ router.get('/', (req, res, next) => {
 /* POST Users */
 router.post('/', (req, res, next) => {
   const data = {};
-  if(req.body.email == null || req.body.password == null || req.body.name == null || req.body.age == null || req.body.type_id == null) {
+  if(checkUserRequest(req, 'post')) {
     data['success'] = false;
     data['message'] = 'Body format is not correct'
     res.status(400).json(data);
   }
-  const userId = uuidv1();
-  const sql = 
+  const newId = uuidv1();
+  let sql = 
   `INSERT INTO Users(id, email, password, name, age, type_id)
-  VALUES ('${userId}', '${req.body.email}', '${req.body.password}', '${req.body.name}', '${req.body.age}', '${req.body.type_id}')`;
+  VALUES ('${newId}', '${req.body.email}', '${req.body.password}', '${req.body.name}', '${req.body.age}', '${req.body.type_id}')`;
   // Users 테이블에 추가
   conn.query(sql, (err, rows, fields) => {
     if(err){
@@ -47,52 +49,98 @@ router.post('/', (req, res, next) => {
       res.status(400).json(data);
     }
   });
-  // Customers 테이블에 추가
+  // Customers 테이블 입력 쿼리
   if(req.body.type_id == 1) {
-    if(req.body.nickname == null) {
-      data['success'] = false;
-      data['message'] = 'Body format is not correct'
-      res.status(400).json(data);
-    }
-    const sql = 
+    sql = 
     `INSERT INTO Customers(id, nickname)
-    VALUES('${userId}', '${req.body.nickname}')`;
-    conn.query(sql, (err, rows, fields) => {
-      if(err){
-        data['success'] = false;
-        data['message'] = 'Bad Query';
-        res.status(400).json(data);
-      }
-      // req.body에 userId를 추가해서 반환한다
-      data['success'] = true;
-      req.body.id = userId;
-      data['data'] = req.body;
-      res.status(201).json(data);
-    });
+    VALUES('${newId}', '${req.body.nickname}')`;
   }
-  // Sellers 테이블에 추가
+  // Sellers 테이블 입력 쿼리
   else {
-    if(req.body.bank == null || req.body.account == null) {
+    sql = 
+    `INSERT INTO Sellers(id, bank, account)
+    VALUES('${newId}', '${req.body.bank}', '${req.body.account}')`;
+  }
+  conn.query(sql, (err, rows, fields) => {
+    if(err){
       data['success'] = false;
-      data['message'] = 'Body format is not correct'
+      data['message'] = 'Bad Query';
       res.status(400).json(data);
     }
-    const sql = 
-    `INSERT INTO Sellers(id, bank, account)
-    VALUES('${userId}', '${req.body.bank}', '${req.body.account}')`;
-    conn.query(sql, (err, rows, fields) => {
-      if(err){
-        data['success'] = false;
-        data['message'] = 'Bad Query';
-        res.status(400).json(data);
-      }
-      // req.body에 userId를 추가해서 반환한다
-      data['success'] = true;
-      req.body.id = userId;
-      data['data'] = req.body;
-      res.status(201).json(data);
-    });
+    // req.body에 newId를 추가해서 반환한다
+    data['success'] = true;
+    req.body.id = newId;
+    data['data'] = req.body;
+    res.status(201).json(data);
+  });
+})
+
+
+/* PUT Users */
+router.put('/:userId', (req, res, next) => {
+  const data = {};
+  if(checkUserRequest(req, 'put')) {
+    data['success'] = false;
+    data['message'] = 'Body format is not correct'
+    res.status(400).json(data);
   }
+  
+  let sql = 
+  `UPDATE Users
+  SET password='${req.body.password}', name='${req.body.name}', age='${req.body.age}'
+  WHERE id='${req.params.userId}'`;
+  // Users 테이블에 추가
+  conn.query(sql, (err, rows, fields) => {
+    const isUpdated = (rows['affectedRows'] >= 1);
+    if(err || !isUpdated){
+      data['success'] = false;
+      data['message'] = 'Bad Query';
+      res.status(400).json(data);
+    }
+  });
+  // Customers 테이블 입력 쿼리
+  if(req.body.type_id == 1) {
+    sql = 
+    `UPDATE Customers
+    SET nickname='${req.body.nickname}'
+    WHERE id='${req.params.userId}'`;
+  }
+  // Sellers 테이블 입력 쿼리
+  else {
+    sql = 
+    `UPDATE Sellers
+    SET bank='${req.body.bank}', account='${req.body.account}'
+    WHERE id='${req.params.userId}'`;
+  }
+  conn.query(sql, (err, rows, fields) => {
+    if(err){
+      data['success'] = false;
+      data['message'] = 'Bad Query';
+      res.status(400).json(data);
+    }
+    // req.body에 userId를 추가해서 반환한다
+    data['success'] = true;
+    req.body.id = req.params.userId;
+    data['data'] = req.body;
+    res.status(201).json(data);
+  });
+})
+
+/* DELETE Users */
+router.delete('/:userId', (req, res, next) => {
+  const data = {};
+  const sql = `DELETE FROM Users WHERE id='${req.params.userId}'`;
+  conn.query(sql, (err, rows, fields) => {
+    const isDeleted = (rows['affectedRows'] >= 1);
+    if(err || !isDeleted) {
+      data['success'] = false;
+      data['message'] = 'There is no user';
+      res.status(409).json(data);
+    }
+    data['success'] = true;
+    data['message'] = 'A user was successfully deleted';
+    res.status(200).json(data);
+  })
 })
 
 module.exports = router;
