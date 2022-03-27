@@ -1,9 +1,9 @@
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 
 const mysqlConnection = {
   // 객체 생성
   init: () => {
-    return mysql.createConnection({
+    return mysql.createPool({
       host: process.env.host,
       user: process.env.user,
       password: process.env.password,
