@@ -8,9 +8,9 @@ const dotenv = require('dotenv').config();
 const mysqlObj = require('../../config/mysql.js');
 const conn = mysqlObj.init();
 
-/* GET Users */
+/* GET users */
 router.get('/', async (req, res, next) => {
-  const sql = `SELECT * FROM Users`;
+  const sql = `SELECT * FROM users`;
   const data = {};
   try{
     let [result, fields] = await conn.query(sql);
@@ -27,7 +27,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-/* POST Users */
+/* POST users */
 router.post('/', async (req, res, next) => {
   const data = {};
   if(checkUserRequest(req, 'post')) {
@@ -37,9 +37,9 @@ router.post('/', async (req, res, next) => {
   }
   const newId = uuidv1();
   let sql = 
-  `INSERT INTO Users(id, email, password, name, age, type_id)
+  `INSERT INTO users(id, email, password, name, age, type_id)
   VALUES ('${newId}', '${req.body.email}', '${req.body.password}', '${req.body.name}', '${req.body.age}', '${req.body.type_id}')`;
-  // Users 테이블에 추가
+  // users 테이블에 추가
   try{
     await conn.query(sql);
   } catch(e){
@@ -47,16 +47,16 @@ router.post('/', async (req, res, next) => {
     data['message'] = 'Bad Query';
     res.status(400).json(data);
   }
-  // Customers 테이블 입력 쿼리
+  // customers 테이블 입력 쿼리
   if(req.body.type_id == 1) {
     sql = 
-    `INSERT INTO Customers(id, nickname)
+    `INSERT INTO customers(id, nickname)
     VALUES('${newId}', '${req.body.nickname}')`;
   }
-  // Sellers 테이블 입력 쿼리
+  // sellers 테이블 입력 쿼리
   else {
     sql = 
-    `INSERT INTO Sellers(id, bank, account)
+    `INSERT INTO sellers(id, bank, account)
     VALUES('${newId}', '${req.body.bank}', '${req.body.account}')`;
   }
   try{
@@ -74,7 +74,7 @@ router.post('/', async (req, res, next) => {
 })
 
 
-/* PUT Users */
+/* PUT users */
 router.put('/:userId', async (req, res, next) => {
   const data = {};
   if(checkUserRequest(req, 'put')) {
@@ -84,10 +84,10 @@ router.put('/:userId', async (req, res, next) => {
   }
   
   let sql = 
-  `UPDATE Users
+  `UPDATE users
   SET password='${req.body.password}', name='${req.body.name}', age='${req.body.age}'
   WHERE id='${req.params.userId}'`;
-  // Users 테이블에 추가
+  // users 테이블에 추가
   try{
     const [result, fields] = await conn.query(sql);
     const isUpdated = (result['affectedRows'] >= 1);
@@ -97,21 +97,21 @@ router.put('/:userId', async (req, res, next) => {
     data['message'] = 'Bad Query';
     res.status(400).json(data);
   }
-  // Customers 테이블 입력 쿼리
+  // customers 테이블 입력 쿼리
   if(req.body.type_id == 1) {
     sql = 
-    `UPDATE Customers
+    `UPDATE customers
     SET nickname='${req.body.nickname}'
     WHERE id='${req.params.userId}'`;
   }
-  // Sellers 테이블 입력 쿼리
+  // sellers 테이블 입력 쿼리
   else {
     sql = 
-    `UPDATE Sellers
+    `UPDATE sellers
     SET bank='${req.body.bank}', account='${req.body.account}'
     WHERE id='${req.params.userId}'`;
   }
-  // Customers 테이블 혹은 Sellers 테이블을 업데이트한다
+  // customers 테이블 혹은 sellers 테이블을 업데이트한다
   try{
     await conn.query(sql);
 
@@ -127,10 +127,10 @@ router.put('/:userId', async (req, res, next) => {
   }
 })
 
-/* DELETE Users */
+/* DELETE users */
 router.delete('/:userId', async (req, res, next) => {
   const data = {};
-  const sql = `DELETE FROM Users WHERE id='${req.params.userId}'`;
+  const sql = `DELETE FROM users WHERE id='${req.params.userId}'`;
   
   try{
     const [result, fields] = await conn.query(sql);

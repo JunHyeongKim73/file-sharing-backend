@@ -9,8 +9,8 @@ const conn = mysqlObj.init();
 router.get('/', async (req, res, next) => {
   const sql = 
   `SELECT *
-  FROM Users
-  JOIN Customers USING(id)`;
+  FROM users
+  JOIN customers USING(id)`;
   const data = {};
 
   try{

@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
     }
     var userId, userType;
     // 비밀번호 받아오는 쿼리
-    const sql = `SELECT * FROM Users WHERE email='${req.body.email}'`;
+    const sql = `SELECT * FROM users WHERE email='${req.body.email}'`;
     try{
         let [result, fields] = await conn.query(sql);
         password = result[0]['password'];
@@ -35,7 +35,7 @@ router.post('/login', async (req, res, next) => {
         };
         // Refresh토큰 DB에 저장
         const refreshToken = signToken(payload, 'refresh');
-        const refreshSQL = `INSERT INTO Tokens(id, token_num) VALUES('${userId}', '${refreshToken}')`;
+        const refreshSQL = `INSERT INTO tokens(id, token_num) VALUES('${userId}', '${refreshToken}')`;
         await conn.query(refreshSQL);
         
         // Access토큰 발행
