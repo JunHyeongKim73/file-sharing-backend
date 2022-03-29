@@ -2,7 +2,7 @@ const {v1: uuidv1} = require('uuid');
 var express = require('express');
 var router = express.Router();
 
-const checkUserRequest = require('./checkUserRequest');
+const checkUserRequest = require('./user-request');
 
 const dotenv = require('dotenv').config();
 const mysqlObj = require('../../config/mysql.js');
