@@ -1,2 +1,2 @@
-const {v1: uuidv1} = require('uuid');
-console.log(uuidv1());
+console.log(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''));
+console.log(new Date(+new Date() + 3240 * 10000).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
