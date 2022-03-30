@@ -85,6 +85,11 @@ router.get('/', async (req, res, next) => {
 /* POST files */
 router.post('/', upload.single('file'), async (req, res, next) => {
   const data = {};
+  if(!req.body.name || !req.body.description || !req.body.price || !req.body.seller_id || !req.body.category_id) {
+    data['success'] = false;
+    data['message'] = 'Body format is not correct'
+    res.status(400).json(data);
+  }
   // 프론트로부터 받은 파일 데이터
   const fileData = req.file;
   const nowTime = new Date(+new Date() + 3240 * 10000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
