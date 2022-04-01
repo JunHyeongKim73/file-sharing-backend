@@ -1,4 +1,5 @@
-const mysql = require("mysql2/promise");
+const dotenv = require('dotenv/config');
+const mysql = require('mysql2/promise');
 
 const mysqlConnection = {
   // 객체 생성
