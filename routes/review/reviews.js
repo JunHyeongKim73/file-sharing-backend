@@ -59,6 +59,7 @@ router.post("/:fileId/reviews", async (req, res, next) => {
 	const data = {};
 	
 	try {
+		// Body에 purchase_id, content, star가 포함되어 있어야 한다
 		if(!req.body.purchase_id || !req.body.content || !req.body.star) {
 			throw Error('BodyFormatError');
 		}
@@ -95,6 +96,7 @@ router.post("/:fileId/reviews", async (req, res, next) => {
 router.put("/:fileId/reviews/:reviewId", async (req, res, next) => {
 	const data = {};
 	try{
+		// Body에 content와 star가 포함되어 있어야 한다
 		if(!req.body.content || !req.body.star) {
 			throw Error('BodyFormatError');
 		}
