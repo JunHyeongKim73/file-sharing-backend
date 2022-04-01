@@ -9,7 +9,7 @@ const conn = mysqlObj.init();
  * 2. 셀러별 모든 판매 목록 확인
  * 3. 셀러별 각 파일의 판매 목록 확인
  */
-router.get("/purchases", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
 	const data = {};
 	try{
 		let sql = `SELECT * FROM purchases`;
@@ -44,7 +44,7 @@ router.get("/purchases", async (req, res, next) => {
 });
 
 /* POST A Purchase */
-router.post("/purchases", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
 	const data = {};
 	if(!req.body.customer_id || !req.body.file_id){
 		data['success'] = false;
@@ -81,101 +81,6 @@ router.post("/purchases", async (req, res, next) => {
 		data['success'] = false;
 		data['message'] = 'Query Error';
 		res.status(400).json(data);
-	}
-});
-
-/* PUT A file */
-router.put("/:fileId", async (req, res, next) => {
-	const data = {};
-	if (!req.body.name || !req.body.description || !req.body.price) {
-		data["success"] = false;
-		data["message"] = "Body format is not correct";
-		res.status(400).json(data);
-	}
-	const path = "/home/rla5764v/file-sharing-backend/";
-	// 프론트로부터 받은 파일 데이터
-	const fileData = req.file;
-
-	// 파일 정보만 바꾼다
-	if (fileData === undefined) {
-		let sql = `UPDATE files
-    SET name='${req.body.name}', description='${req.body.description}', price=${req.body.price}
-    WHERE id='${req.params.fileId}'`;
-		try {
-			let [result, field] = await conn.query(sql);
-			if (result["affectedRows"] == 0) throw Error("NoFileException");
-
-			sql = `SELECT * FROM files WHERE id='${req.params.fileId}'`;
-			[result, field] = await conn.query(sql);
-
-			data["success"] = true;
-			data["message"] = result[0];
-			res.status(201).json(data);
-		} catch (e) {
-			console.error(e);
-			data["success"] = false;
-			data["message"] = "No Such File";
-			res.status(409).json(data);
-		}
-	}
-	// 파일 자체를 바꾼다
-	else {
-		let sql = `SELECT path FROM files WHERE id='${req.params.fileId}'`;
-		try {
-			let [result, fields] = await conn.query(sql);
-
-			if (result.length == 0) {
-				await fs.unlink(path + fileData["path"]);
-				throw Error("NoFileException");
-			}
-			// 원래 파일을 지운다
-			await fs.unlink(path + result[0]["path"]);
-
-			sql = `UPDATE files
-      SET name='${req.body.name}', extension='${fileData["mimetype"]}', description='${req.body.description}', 
-      price=${req.body.price}, path='${fileData["path"]}'
-      WHERE id='${req.params.fileId}'`;
-
-			[result, fields] = await conn.query(sql);
-			if (result["affectedRows"] == 0) throw Error();
-			res.send("hi");
-		} catch (e) {
-			data["success"] = false;
-			if (e.name == "NoFileException") {
-				data["message"] = "No Such File";
-				res.status(409).json(data);
-			} else {
-				data["message"] = "Query Error";
-				res.status(400).json(data);
-			}
-		}
-	}
-});
-
-/* DELETE A file */
-router.delete("/:fileId", async (req, res, next) => {
-	const data = {};
-
-	try {
-		let sql = `SELECT path FROM files WHERE id='${req.params.fileId}'`;
-		let [result, fields] = await conn.query(sql);
-		if (result.length == 0) throw Error("NoFileException");
-
-		const path = "/home/rla5764v/file-sharing-backend/";
-		// 해당 파일을 스토리지에서 삭제한다
-		await fs.unlink(path + result[0]["path"]);
-		// 해당 파일을 DB에서 삭제한다
-		sql = `DELETE FROM files WHERE id='${req.params.fileId}'`;
-		[result, fields] = await conn.query(sql);
-
-		data["success"] = true;
-		data["message"] = "A file was successfully deleted";
-		res.status(200).json(data);
-	} catch (e) {
-		console.error(e);
-		data["success"] = false;
-		data["message"] = "No Such File";
-		res.status(409).json(data);
 	}
 });
 
