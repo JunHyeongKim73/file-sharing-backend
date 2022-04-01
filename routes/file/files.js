@@ -82,7 +82,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-/* POST files */
+/* POST A file */
 router.post('/', upload.single('file'), async (req, res, next) => {
   const data = {};
   if(!req.body.name || !req.body.description || !req.body.price || !req.body.seller_id || !req.body.category_id) {
