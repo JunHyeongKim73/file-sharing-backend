@@ -1,8 +1,8 @@
 // MySQL DB 연결 모듈
-const mysqlObj = require('../../config/mysql.js');
+const mysqlObj = require('../config/mysql.js');
 const conn = mysqlObj.init();
 // 에러 핸들러
-const errorHandlers = require('../../utils/error-handler');
+const errorHandlers = require('../utils/error-handler');
 
 // GET A Review of A File
 const getReview = async (req, res, next) => {

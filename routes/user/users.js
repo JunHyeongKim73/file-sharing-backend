@@ -1,18 +1,19 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
 
-const userController = require('./user-controller');
+const userController = require('../../controllers/user-controller');
+const tokenChecker = require('../../middlewares/token-checker');
 
 /* GET users */
-router.get("/", userController.getUsers);
+router.get('/', userController.getUsers);
 
-/* POST users */
-router.post("/", userController.postUser);
+/* POST A User */
+router.post('/', tokenChecker, userController.postUser);
 
-/* PUT users */
-router.put("/:userId", userController.putUser);
+/* PUT A User */
+router.put('/:userId', tokenChecker, userController.putUser);
 
-/* DELETE users */
-router.delete("/:userId", userController.deleteUser);
+/* DELETE A User */
+router.delete('/:userId', tokenChecker, userController.deleteUser);
 
 module.exports = router;

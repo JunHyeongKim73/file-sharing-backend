@@ -14,11 +14,11 @@ const upload = multer({
 });
 
 // 데이터베이스 연결을 위한 모듈
-const mysqlObj = require('../../config/mysql.js');
+const mysqlObj = require('../config/mysql.js');
 const conn = mysqlObj.init();
 
 // 에러 핸들러
-const errorHandlers = require('../../utils/error-handler.js');
+const errorHandlers = require('../utils/error-handler.js');
 
 const fileMiddleWare = upload.single('file');
 
