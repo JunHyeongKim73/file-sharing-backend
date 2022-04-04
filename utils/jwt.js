@@ -9,7 +9,6 @@ const verifyAccessToken = (token) => {
         return jwt.verify(token, process.env.JWT_KEY);
     }
     catch(e) {
-        console.error(e);
         return null;
     }
 }
@@ -28,7 +27,6 @@ const verifyRefreshToken = async (token) => {
         if(token != result[0]['token_num']) throw Error('TokenValidError');
         return refreshToken;
     } catch(e) {
-        console.error(e);
         return null;
     }
 }

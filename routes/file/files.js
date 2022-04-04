@@ -3,6 +3,7 @@ var router = express.Router();
 
 const fileController = require('../../controllers/file-controller');
 const tokenChecker = require('../../middlewares/token-checker');
+const authorityChecker = require('../../middlewares/authority-checker');
 
 /* GET Contents of A file */
 router.get('/:fileId/content', fileController.getFileContent);
@@ -21,12 +22,12 @@ router.get('/:fileId/data', fileController.getFileData);
 router.get('/', fileController.getFiles);
 
 /* POST A file */
-router.post('/', tokenChecker, fileController.fileMiddleWare, fileController.postFile);
+router.post('/', tokenChecker, authorityChecker, fileController.fileMiddleWare, fileController.postFile);
 
 /* PUT A file */
-router.put('/:fileId', tokenChecker, fileController.fileMiddleWare, fileController.putFile);
+router.put('/:fileId', tokenChecker, authorityChecker, fileController.fileMiddleWare, fileController.putFile);
 
 /* DELETE A file */
-router.delete('/:fileId', tokenChecker, fileController.deleteFile);
+router.delete('/:fileId', tokenChecker, authorityChecker, fileController.deleteFile);
 
 module.exports = router;

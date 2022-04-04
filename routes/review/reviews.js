@@ -3,6 +3,7 @@ var router = express.Router();
 
 const reviewController = require('../../controllers/review-controller');
 const tokenChecker = require('../../middlewares/token-checker');
+const authorityChecker = require('../../middlewares/authority-checker');
 
 // GET A Review of A File
 router.get("/:fileId/reviews/:reviewId", reviewController.getReview);
@@ -11,12 +12,12 @@ router.get("/:fileId/reviews/:reviewId", reviewController.getReview);
 router.get("/:fileId/reviews", reviewController.getReviews);
 
 /* POST A Review of A File */
-router.post("/:fileId/reviews", tokenChecker, reviewController.postReview);
+router.post("/:fileId/reviews", tokenChecker, authorityChecker, reviewController.postReview);
 
 /* PUT A Review of A File */
-router.put("/:fileId/reviews/:reviewId", tokenChecker, reviewController.putReview);
+router.put("/:fileId/reviews/:reviewId", tokenChecker, authorityChecker, reviewController.putReview);
 
 /* DELETE A Review of A File */
-router.delete("/:fileId/reviews/:reviewId", tokenChecker, reviewController.deleteReview);
+router.delete("/:fileId/reviews/:reviewId", tokenChecker, authorityChecker, reviewController.deleteReview);
 
 module.exports = router;

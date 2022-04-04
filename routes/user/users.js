@@ -3,15 +3,16 @@ var router = express.Router();
 
 const userController = require('../../controllers/user-controller');
 const tokenChecker = require('../../middlewares/token-checker');
+const authorityChecker = require('../../middlewares/authority-checker');
 
 /* GET users */
-router.get('/', userController.getUsers);
+router.get('/', tokenChecker, authorityChecker, userController.getUsers);
 
 /* POST A User */
 router.post('/', tokenChecker, userController.postUser);
 
 /* PUT A User */
-router.put('/:userId', tokenChecker, userController.putUser);
+router.put('/:userId', tokenChecker, authorityChecker, userController.putUser);
 
 /* DELETE A User */
 router.delete('/:userId', tokenChecker, userController.deleteUser);
