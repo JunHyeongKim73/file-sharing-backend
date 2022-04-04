@@ -1,56 +1,22 @@
 var express = require('express');
 var router = express.Router();
-const jwt = require('jsonwebtoken');
 
-const dotenv = require('dotenv').config();
-const mysqlObj = require('../../config/mysql.js');
-const { verifyToken, signToken } = require('../../utils/jwt.js');
-const conn = mysqlObj.init();
+const authController = require('../../controllers/auth-controller');
+const tokenChecker = require('../../middlewares/token-checker');
 
-router.post('/login', async (req, res, next) => {
-    const data = {};
-    if(!req.body.email || !req.body.password) {
-        data['success'] = false;
-        data['message'] = 'Body format is not correct';
-        res.status(400).json(data);
-    }
-    var userId, userType;
-    // 비밀번호 받아오는 쿼리
-    const sql = `SELECT * FROM users WHERE email='${req.body.email}'`;
-    try{
-        let [result, fields] = await conn.query(sql);
-        password = result[0]['password'];
-        // 이메일 / 비밀번호 불일치
-        if(req.body.password != password) {
-            data['success'] = false;
-            data['message'] = `Email doesn't exist or Password was wrong`;
-            res.status(409).json(data);
-        }
-        userId = result[0].id;
-        userType = result[0].type_id;
+/**
+ * 로그인 API
+ * 이메일과 아이디를 인자로 받는다
+ * Access 토큰과 Refresh 토큰이 발급된다
+ * Refresh 토큰은 DB에 저장된다
+ */
+router.post('/login', authController.login);
 
-        const payload = { 
-            'id' : userId,
-            'type' : userType 
-        };
-        // Refresh토큰 DB에 저장
-        const refreshToken = signToken(payload, 'refresh');
-        const refreshSQL = `INSERT INTO tokens(id, token_num) VALUES('${userId}', '${refreshToken}')`;
-        await conn.query(refreshSQL);
-        
-        // Access토큰 발행
-        const accessToken = signToken(payload, 'access');
-        data['success'] = true;
-        data['accessToken'] = accessToken;
-        data['refreshToken'] = refreshToken;
-        res.status(200).json(data);
-    }
-    catch(e) {
-        console.error(e);
-        data['success'] = false;
-        data['message'] = 'Query Error';
-        res.status(400).json(data);
-    }
-});
+/**
+ * 로그아웃 API
+ * userID를 인자로 받는다
+ * 해당 유저의 Refresh 토큰을 DB에서 삭제한다
+ */
+router.post('/logout', tokenChecker, authController.logout);
 
 module.exports = router;

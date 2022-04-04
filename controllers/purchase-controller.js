@@ -1,6 +1,6 @@
 // MySQL DB 연결 모듈
-const mysqlObj = require('../../config/mysql.js');
-const errorHandlers = require('../../utils/error-handler.js');
+const mysqlObj = require('../config/mysql.js');
+const errorHandlers = require('../utils/error-handler.js');
 const conn = mysqlObj.init();
 
 /**
