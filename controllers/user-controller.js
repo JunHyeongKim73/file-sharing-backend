@@ -64,11 +64,11 @@ const postUser = async (req, res, next) => {
 		const accessToken = signToken(payload, 'access');
 		data['success'] = true;
 
-		data['accessToken'] = accessToken;
-		data['refreshToken'] = refreshToken;
-
 		req.body.id = newId;
 		data['data'] = req.body;
+		
+		res.cookie('accessToken', accessToken);
+		res.cookie('refreshToken', refreshToken);
 		res.status(201).json(data);
 	} catch (e) {
 		errorHandlers(e, res);
