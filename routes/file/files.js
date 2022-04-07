@@ -2,17 +2,21 @@ var express = require('express');
 var router = express.Router();
 
 const fileController = require('../../controllers/file-controller');
+
+const Multer = require('multer');
+const multer = Multer({
+	storage: Multer.memoryStorage(),
+    limits: {
+        fileSize: 20 * 1024 * 1024
+    }
+});
+
 const tokenChecker = require('../../middlewares/token-checker');
 const authorityChecker = require('../../middlewares/authority-checker');
+const upload = require('../../middlewares/upload');
 
 /* GET Contents of A file */
-router.get('/:fileId/content', fileController.getFileContent);
-
-/**
- * GET Data of A file
- * 이미지, 동영상, 문서 등의 데이터를 보낸다
- */
-router.get('/:fileId/data', fileController.getFileData);
+router.get('/:fileId', fileController.getFile);
 
 /**
  * GET files
@@ -22,10 +26,10 @@ router.get('/:fileId/data', fileController.getFileData);
 router.get('/', fileController.getFiles);
 
 /* POST A file */
-router.post('/', tokenChecker, authorityChecker, fileController.fileMiddleWare, fileController.postFile);
+router.post('/', tokenChecker, authorityChecker, multer.single('file'), upload, fileController.postFile);
 
 /* PUT A file */
-router.put('/:fileId', tokenChecker, authorityChecker, fileController.fileMiddleWare, fileController.putFile);
+router.put('/:fileId', tokenChecker, authorityChecker, multer.single('file'), upload, fileController.putFile);
 
 /* DELETE A file */
 router.delete('/:fileId', tokenChecker, authorityChecker, fileController.deleteFile);

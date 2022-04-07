@@ -9,6 +9,7 @@ const errorHandlers = (e, res) => {
 		'NoFileError',
 		'NoPurchaseError',
 		'NoReviewError',
+		'SameEmailError'
 	];
 
 	data['success'] = false;

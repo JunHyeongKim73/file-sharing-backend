@@ -9,7 +9,10 @@ const authorityChecker = require('../../middlewares/authority-checker');
 router.get('/', tokenChecker, authorityChecker, userController.getUsers);
 
 /* POST A User */
-router.post('/', tokenChecker, userController.postUser);
+router.post('/', userController.postUser);
+
+/* Check Whether same email exists */
+router.post('/check-email', userController.checkUserEmail);
 
 /* PUT A User */
 router.put('/:userId', tokenChecker, authorityChecker, userController.putUser);

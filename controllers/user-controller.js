@@ -75,6 +75,24 @@ const postUser = async (req, res, next) => {
 	}
 };
 
+/* Check Whether same email exists */
+const checkUserEmail = async (req, res, next) => {
+	const data = {};
+	const sql = `SELECT email FROM users WHERE email='${req.body.email}'`;
+	try{
+		const [result, fields] = await conn.query(sql);
+		if(result.length != 0) {
+			throw Error('SameEmailError');
+		}
+
+		data['success'] = true;
+		data['message'] = 'Available Email';
+		res.status(200).json(data);
+	} catch(e) {
+		errorHandlers(e, res);
+	}
+};
+
 /* PUT users */
 const putUser = async (req, res, next) => {
 	const data = {};
@@ -183,6 +201,7 @@ const getSellers = async (req, res, next) => {
 module.exports = {
 	getUsers,
 	postUser,
+	checkUserEmail,
 	putUser,
 	deleteUser,
 	getCustomers,
