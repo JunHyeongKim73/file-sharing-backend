@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user/users');
 var customersRouter = require('./routes/user/customers');
 var sellersRouter = require('./routes/user/sellers');
@@ -26,7 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/customers', customersRouter);
 app.use('/sellers', sellersRouter);
@@ -43,13 +41,13 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+  const data = {};
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  data['success'] = false;
+  data['message'] = err.message;
+  data['error'] = req.app.get('env') === 'development' ? err : {};
+  // 오류 메세지를 응답으로 보낸다
+  res.status(err.status || 500).json(data);
 });
 
 module.exports = app;
