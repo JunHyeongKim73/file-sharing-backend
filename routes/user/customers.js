@@ -5,6 +5,6 @@ const userController = require('../../controllers/user-controller');
 const tokenChecker = require('../../middlewares/token-checker');
 
 /* GET cutomers */
-router.get('/', tokenChecker, userController.getCustomers);
+router.get('/', tokenChecker.checkAccessToken, userController.getCustomers);
 
 module.exports = router;

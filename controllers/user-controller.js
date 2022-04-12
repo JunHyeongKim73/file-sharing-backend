@@ -55,6 +55,7 @@ const postUser = async (req, res, next) => {
 			id: newId,
 			type: req.body.type_id,
 		};
+
 		// Refresh 토큰 DB에 저장
 		const refreshToken = signToken(payload, 'refresh');
 		const refreshSQL = `INSERT INTO tokens(id, token_num) VALUES('${newId}', '${refreshToken}')`;
@@ -62,13 +63,16 @@ const postUser = async (req, res, next) => {
 
 		// Access 토큰 발행
 		const accessToken = signToken(payload, 'access');
-		data['success'] = true;
-
-		req.body.id = newId;
-		data['data'] = req.body;
 		
-		res.cookie('accessToken', accessToken);
-		res.cookie('refreshToken', refreshToken);
+		req.body.id = newId;
+
+		data['success'] = true;
+		data['data'] = req.body;
+		data['accessToken'] = accessToken;
+		
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true
+		});
 		res.status(201).json(data);
 	} catch (e) {
 		errorHandlers(e, res);

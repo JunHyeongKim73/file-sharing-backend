@@ -12,12 +12,12 @@ router.get("/:fileId/reviews/:reviewId", reviewController.getReview);
 router.get("/:fileId/reviews", reviewController.getReviews);
 
 /* POST A Review of A File */
-router.post("/:fileId/reviews", tokenChecker, authorityChecker, reviewController.postReview);
+router.post("/:fileId/reviews", tokenChecker.checkAccessToken, authorityChecker, reviewController.postReview);
 
 /* PUT A Review of A File */
-router.put("/:fileId/reviews/:reviewId", tokenChecker, authorityChecker, reviewController.putReview);
+router.put("/:fileId/reviews/:reviewId", tokenChecker.checkAccessToken, authorityChecker, reviewController.putReview);
 
 /* DELETE A Review of A File */
-router.delete("/:fileId/reviews/:reviewId", tokenChecker, authorityChecker, reviewController.deleteReview);
+router.delete("/:fileId/reviews/:reviewId", tokenChecker.checkAccessToken, authorityChecker, reviewController.deleteReview);
 
 module.exports = router;

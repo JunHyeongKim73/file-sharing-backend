@@ -6,7 +6,7 @@ const tokenChecker = require('../../middlewares/token-checker');
 const authorityChecker = require('../../middlewares/authority-checker');
 
 /* GET users */
-router.get('/', tokenChecker, authorityChecker, userController.getUsers);
+router.get('/', tokenChecker.checkAccessToken, authorityChecker, userController.getUsers);
 
 /* POST A User */
 router.post('/', userController.postUser);
@@ -15,9 +15,9 @@ router.post('/', userController.postUser);
 router.post('/check-email', userController.checkUserEmail);
 
 /* PUT A User */
-router.put('/:userId', tokenChecker, authorityChecker, userController.putUser);
+router.put('/:userId', tokenChecker.checkAccessToken, authorityChecker, userController.putUser);
 
 /* DELETE A User */
-router.delete('/:userId', tokenChecker, userController.deleteUser);
+router.delete('/:userId', tokenChecker.checkAccessToken, userController.deleteUser);
 
 module.exports = router;

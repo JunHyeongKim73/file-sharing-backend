@@ -17,6 +17,14 @@ router.post('/login', authController.login);
  * userID를 인자로 받는다
  * 해당 유저의 Refresh 토큰을 DB에서 삭제한다
  */
-router.post('/logout', tokenChecker, authController.logout);
+router.post('/logout', tokenChecker.checkAccessToken, authController.logout);
+
+/**
+ * 토큰 재발급 API
+ * userID를 인자로 받는다
+ * 새로운 Access, Refresh 토큰이 발급된다
+ * Refresh 토큰은 DB에 저장된다
+ */
+router.post('/refresh', tokenChecker.checkRefreshToken, authController.refresh);
 
 module.exports = router;
