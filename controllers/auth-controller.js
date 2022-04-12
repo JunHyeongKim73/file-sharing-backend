@@ -46,7 +46,8 @@ const login = async (req, res, next) => {
 		data['accessToken'] = accessToken;
 
 		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true
+			httpOnly: true,
+			secure: true,
 		});
 		res.status(200).json(data);
 	} catch (e) {
@@ -113,7 +114,8 @@ const refresh = async (req, res, next) => {
 		data['accessToken'] = accessToken;
 
 		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true
+			httpOnly: true,
+			secure: true,
 		});
 		res.status(200).json(data);
 	} catch (e) {
