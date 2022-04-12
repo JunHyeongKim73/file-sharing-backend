@@ -10,9 +10,9 @@ const authorityChecker = require('../../middlewares/authority-checker');
  * 2. 셀러별 모든 판매 목록 확인
  * 3. 셀러별 각 파일의 판매 목록 확인
  */
-router.get('/', tokenChecker, authorityChecker, purchaseController.getPurchases);
+router.get('/', tokenChecker.checkAccessToken, authorityChecker, purchaseController.getPurchases);
 
 /* POST A Purchase */
-router.post('/', tokenChecker, authorityChecker, purchaseController.postPurchase);
+router.post('/', tokenChecker.checkAccessToken, authorityChecker, purchaseController.postPurchase);
 
 module.exports = router;

@@ -26,12 +26,12 @@ router.get('/:fileId', fileController.getFile);
 router.get('/', fileController.getFiles);
 
 /* POST A file */
-router.post('/', tokenChecker, authorityChecker, multer.single('file'), upload, fileController.postFile);
+router.post('/', tokenChecker.checkAccessToken, authorityChecker, multer.single('file'), upload, fileController.postFile);
 
 /* PUT A file */
-router.put('/:fileId', tokenChecker, authorityChecker, multer.single('file'), upload, fileController.putFile);
+router.put('/:fileId', tokenChecker.checkAccessToken, authorityChecker, multer.single('file'), upload, fileController.putFile);
 
 /* DELETE A file */
-router.delete('/:fileId', tokenChecker, authorityChecker, fileController.deleteFile);
+router.delete('/:fileId', tokenChecker.checkAccessToken, authorityChecker, fileController.deleteFile);
 
 module.exports = router;
