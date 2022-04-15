@@ -1,6 +1,4 @@
 const errorHandlers = (e, res) => {
-	console.error(e);
-
 	const data = {};
 	const messageList = [
 		'NoUserError',

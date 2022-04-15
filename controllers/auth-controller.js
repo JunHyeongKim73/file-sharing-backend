@@ -19,6 +19,7 @@ const login = async (req, res, next) => {
 
 		// 비밀번호 받아오는 쿼리
 		const sql = `SELECT * FROM users WHERE email='${req.body.email}'`;
+		
 		let [result, fields] = await conn.query(sql);
 		password = result[0]['password'];
 		// 이메일 혹은 비밀번호 불일치
